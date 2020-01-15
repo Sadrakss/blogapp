@@ -27,6 +27,11 @@ mongoose.connect('mongodb://localhost:27017/blogapp',{
 
 //public
 app.use(express.static(path.join(__dirname, 'public')))
+// Middlewares
+// app.use((req,res,next)=>{
+//     console.log('I am a middleware')
+//     next()
+// })
 
 // routes
 app.use('/admin', admin)
