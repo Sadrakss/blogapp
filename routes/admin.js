@@ -91,14 +91,14 @@ router.post('/categories/delete', (req, res) => {
 
 router.get('/posts', (req, res) => {
     post.find()
-    .populate('category')
-    .sort({ date: 'desc' })
-    .then((posts) => {
-        res.render('admin/posts', { posts: posts })
-    }).catch((err)=>{
-        req.flash('error_msg', 'there was an error listing the posts')
-        res.redirect('/admin')
-    })
+        .populate('category')
+        .sort({ date: 'desc' })
+        .then((posts) => {
+            res.render('admin/posts', { posts: posts })
+        }).catch((err) => {
+            req.flash('error_msg', 'there was an error listing the posts')
+            res.redirect('/admin')
+        })
 })
 
 router.get('/posts/add', (req, res) => {
@@ -135,6 +135,42 @@ router.post('/posts/new', (req, res) => {
             res.redirect('/admin/posts')
         })
     }
+})
+
+router.get('/posts/edit/:id', (req, res) => {
+    post.findOne({ _id: req.params.id }).then((post) => {
+        category.find().then((categories) => {
+            res.render('admin/editposts', { categories: categories, post: post })
+        }).catch((err) => {
+            req.flash('error_msg', 'there was an error listing the categories')
+            res.redirect('/admin/posts')
+        })
+    }).catch((err) => {
+        req.flash('error_msg', 'there was an error loadind edit form')
+        res.redirect('/admin/posts')
+    })
+})
+
+router.post('/post/edit', (req, res) => {
+    post.findOne({ _id: req.body.id }).then((post) => {
+        post.title = req.body.title
+        post.slug = req.body.slug
+        post.description = req.body.description
+        post.content = req.body.content
+        
+        post.save().then(()=>{
+            req.flash('success_msg','Post edited successfully')
+            res.redirect('/admin/posts')
+        }).catch((err)=>{
+            req.flash('error_msg','There was an error editing the post')
+            res.redirect('/admin/posts')
+        })
+
+    }).catch((err) => {
+        // console.log(err) Depurar erro
+        req.flash('error_msg', 'there was an error saving the edit')
+        res.redirect('/admin/posts')
+    })
 })
 
 module.exports = router
