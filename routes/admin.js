@@ -90,8 +90,17 @@ router.post('/categories/delete', (req, res) => {
 })
 
 router.get('/posts', (req, res) => {
-    res.render('admin/posts')
+    post.find()
+    .populate('category')
+    .sort({ date: 'desc' })
+    .then((posts) => {
+        res.render('admin/posts', { posts: posts })
+    }).catch((err)=>{
+        req.flash('error_msg', 'there was an error listing the posts')
+        res.redirect('/admin')
+    })
 })
+
 router.get('/posts/add', (req, res) => {
     category.find().then((categories) => {
         res.render('admin/addpost', { categories: categories })
@@ -102,27 +111,27 @@ router.get('/posts/add', (req, res) => {
 })
 
 router.post('/posts/new', (req, res) => {
-    var error=[]
+    var error = []
 
-    if(req.body.category == '0'){
-        error.push({text:"invalid category, register a category!"})
+    if (req.body.category == '0') {
+        error.push({ text: "invalid category, register a category!" })
     }
-    if(error.length > 0){
-        res.render('admin/addpost',{error:error})
-    }else{
-        const newPost={
-            title:req.body.title,
-            slug:req.body.slug,
-            description:req.body.description,
-            content:req.body.content,
-            category:req.body.category
+    if (error.length > 0) {
+        res.render('admin/addpost', { error: error })
+    } else {
+        const newPost = {
+            title: req.body.title,
+            slug: req.body.slug,
+            description: req.body.description,
+            content: req.body.content,
+            category: req.body.category
         }
 
-        new post(newPost).save().then(()=>{
+        new post(newPost).save().then(() => {
             req.flash('success_msg', 'post created successfully')
             res.redirect('/admin/posts')
-        }).catch((err)=>{
-            req.flash('error_msg','there was an error saving the post')
+        }).catch((err) => {
+            req.flash('error_msg', 'there was an error saving the post')
             res.redirect('/admin/posts')
         })
     }
