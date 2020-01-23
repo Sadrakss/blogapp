@@ -138,7 +138,7 @@ router.post('/posts/new', (req, res) => {
 })
 
 router.get('/posts/edit/:id', (req, res) => {
-    post.findOne({ _id: req.params.id }).then((post) => {
+    post.findOneAndUpdate({ _id: req.params.id }).then((post) => {
         category.find().then((categories) => {
             res.render('admin/editposts', { categories: categories, post: post })
         }).catch((err) => {
@@ -152,7 +152,7 @@ router.get('/posts/edit/:id', (req, res) => {
 })
 
 router.post('/post/edit', (req, res) => {
-    post.findOne({ _id: req.body.id }).then((post) => {
+    post.findOneAndUpdate({ _id: req.body.id }).then((post) => {
         post.title = req.body.title
         post.slug = req.body.slug
         post.description = req.body.description
