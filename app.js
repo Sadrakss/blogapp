@@ -11,6 +11,7 @@ const flash = require('connect-flash')
 require('./models/post')
 const post = mongoose.model('posts')
 const category = mongoose.model('categories')
+const users = require('./routes/user')
 // settings
 //settings - sessions
 app.use(session({
@@ -107,6 +108,7 @@ app.get('/404', (req, res) => {
 })
 
 app.use('/admin', admin)
+app.use('/users', users)
 //others
 const PORT = 8081
 app.listen(PORT, () => {
