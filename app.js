@@ -53,8 +53,11 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 // routes
 app.get('/', (req, res) => {
-    post.find().populate('category').sort({ date: 'desc' }).then((posts) => {
+    post.find().populate('category')
+    .sort({ date: 'desc' })
+    .then((posts) => {
         res.render('index', { posts: posts })
+        console.log()
     }).catch((err) => {
         req.flash('error_msg', 'There was an internal error')
         res.redirect('/404')
