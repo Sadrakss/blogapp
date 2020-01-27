@@ -58,7 +58,6 @@ app.get('/', (req, res) => {
     .sort({ date: 'desc' })
     .then((posts) => {
         res.render('index', { posts: posts })
-        console.log()
     }).catch((err) => {
         req.flash('error_msg', 'There was an internal error')
         res.redirect('/404')
