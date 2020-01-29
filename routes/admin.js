@@ -5,12 +5,13 @@ require('../models/category')
 const category = mongoose.model('categories')
 require('../models/post')
 const post = mongoose.model('posts')
+const { eAdmin } = require('../helpers/eAdmin')
 
-router.get('/', (req, res) => {
+router.get('/', eAdmin, (req, res) => {
     res.render('admin/index')
 })
 
-router.get('/categories', (req, res) => {
+router.get('/categories', eAdmin, (req, res) => {
     category.find().sort({ date: 'desc' }).then((categories) => {
         res.render('admin/categories', { categories: categories })
     }).catch((err) => {
@@ -19,10 +20,10 @@ router.get('/categories', (req, res) => {
     })
 
 })
-router.get('/categories/add', (req, res) => {
+router.get('/categories/add', eAdmin, (req, res) => {
     res.render('admin/addcategories')
 })
-router.post('/categories/new', (req, res) => {
+router.post('/categories/new', eAdmin, (req, res) => {
     var error = []
 
     if (!req.body.name || typeof req.body.name == undefined || req.body.name == null) {
@@ -51,7 +52,7 @@ router.post('/categories/new', (req, res) => {
     }
 })
 
-router.get('/categories/edit/:id', (req, res) => {
+router.get('/categories/edit/:id', eAdmin, (req, res) => {
     category.findOne({ _id: req.params.id }).then((category) => {
         res.render('admin/editcategories', { category: category })
     }).catch((err) => {
@@ -60,7 +61,7 @@ router.get('/categories/edit/:id', (req, res) => {
     })
 })
 
-router.post('/categories/edit', (req, res) => {
+router.post('/categories/edit', eAdmin, (req, res) => {
     category.findOne({ _id: req.body.id }).then((category) => {
         category.name = req.body.name
         category.slug = req.body.slug
@@ -79,7 +80,7 @@ router.post('/categories/edit', (req, res) => {
     })
 })
 
-router.post('/categories/delete', (req, res) => {
+router.post('/categories/delete', eAdmin, (req, res) => {
     category.findOneAndRemove({ _id: req.body.id }).then(() => {
         req.flash('success_msg', 'category successfully deleted')
         res.redirect('/admin/categories')
@@ -89,7 +90,7 @@ router.post('/categories/delete', (req, res) => {
     })
 })
 
-router.get('/posts', (req, res) => {
+router.get('/posts', eAdmin, (req, res) => {
     post.find()
         .populate('category')
         .sort({ date: 'desc' })
@@ -101,7 +102,7 @@ router.get('/posts', (req, res) => {
         })
 })
 
-router.get('/posts/add', (req, res) => {
+router.get('/posts/add', eAdmin, (req, res) => {
     category.find().then((categories) => {
         res.render('admin/addpost', { categories: categories })
     }).catch((err) => {
@@ -110,7 +111,7 @@ router.get('/posts/add', (req, res) => {
     })
 })
 
-router.post('/posts/new', (req, res) => {
+router.post('/posts/new', eAdmin, (req, res) => {
     var error = []
 
     if (req.body.category == '0') {
@@ -137,7 +138,7 @@ router.post('/posts/new', (req, res) => {
     }
 })
 
-router.get('/posts/edit/:id', (req, res) => {
+router.get('/posts/edit/:id', eAdmin, (req, res) => {
     post.findOneAndUpdate({ _id: req.params.id }).then((post) => {
         category.find().then((categories) => {
             res.render('admin/editposts', { categories: categories, post: post })
@@ -151,18 +152,18 @@ router.get('/posts/edit/:id', (req, res) => {
     })
 })
 
-router.post('/post/edit', (req, res) => {
+router.post('/post/edit', eAdmin, (req, res) => {
     post.findOneAndUpdate({ _id: req.body.id }).then((post) => {
         post.title = req.body.title
         post.slug = req.body.slug
         post.description = req.body.description
         post.content = req.body.content
-        
-        post.save().then(()=>{
-            req.flash('success_msg','Post edited successfully')
+
+        post.save().then(() => {
+            req.flash('success_msg', 'Post edited successfully')
             res.redirect('/admin/posts')
-        }).catch((err)=>{
-            req.flash('error_msg','There was an error editing the post')
+        }).catch((err) => {
+            req.flash('error_msg', 'There was an error editing the post')
             res.redirect('/admin/posts')
         })
 
@@ -173,12 +174,12 @@ router.post('/post/edit', (req, res) => {
     })
 })
 
-router.get('/posts/delete/:id',(req,res)=>{
-    post.findOneAndRemove({_id: req.params.id}).then(()=>{
-        req.flash('success_msg','post deleted successfully')
+router.get('/posts/delete/:id', eAdmin, (req, res) => {
+    post.findOneAndRemove({ _id: req.params.id }).then(() => {
+        req.flash('success_msg', 'post deleted successfully')
         res.redirect('/admin/posts')
-    }).catch((err)=>{
-        req.flash('error_msg','there was an error deleting the post')
+    }).catch((err) => {
+        req.flash('error_msg', 'there was an error deleting the post')
     })
 })
 
