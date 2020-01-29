@@ -12,6 +12,8 @@ require('./models/post')
 const post = mongoose.model('posts')
 const category = mongoose.model('categories')
 const users = require('./routes/user')
+const passport = require('passport')
+require('./config/auth')(passport)
 // settings
 //settings - sessions
 app.use(session({
@@ -19,11 +21,17 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }))
+
+app.use(passport.initialize())
+app.use(passport.session())
+
+
 app.use(flash())
 // settings - Middleware
 app.use((req, res, next) => {
     res.locals.success_msg = req.flash('success_msg')
     res.locals.error_msg = req.flash('error_msg')
+    res.locals.error = req.flash('error')
     next()
 })
 //settings-bodyParser
@@ -55,13 +63,13 @@ app.use(express.static(path.join(__dirname, 'public')))
 // routes
 app.get('/', (req, res) => {
     post.find().populate('category')
-    .sort({ date: 'desc' })
-    .then((posts) => {
-        res.render('index', { posts: posts })
-    }).catch((err) => {
-        req.flash('error_msg', 'There was an internal error')
-        res.redirect('/404')
-    })
+        .sort({ date: 'desc' })
+        .then((posts) => {
+            res.render('index', { posts: posts })
+        }).catch((err) => {
+            req.flash('error_msg', 'There was an internal error')
+            res.redirect('/404')
+        })
 })
 
 app.get('/post/:slug', (req, res) => {
