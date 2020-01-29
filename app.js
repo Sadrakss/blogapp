@@ -63,7 +63,6 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 // routes
 app.get('/', (req, res) => {
-<<<<<<< HEAD
     post.find()
     .populate('category')
     .sort({ date: 'desc' })
@@ -73,16 +72,6 @@ app.get('/', (req, res) => {
         req.flash('error_msg', 'There was an internal error')
         res.redirect('/404')
     })
-=======
-    post.find().populate('category')
-        .sort({ date: 'desc' })
-        .then((posts) => {
-            res.render('index', { posts: posts })
-        }).catch((err) => {
-            req.flash('error_msg', 'There was an internal error')
-            res.redirect('/404')
-        })
->>>>>>> logout
 })
 
 app.get('/post/:slug', (req, res) => {
