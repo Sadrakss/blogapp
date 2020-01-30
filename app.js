@@ -44,7 +44,7 @@ app.engine('handlebars', handlebars({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
 
 // setting - Mongoose
-mongoose.connect('mongodb://localhost:27017/blogapp', {
+mongoose.connect('mongodb+srv://teste:teste@cluster0-yjb6q.mongodb.net/blogapp?retryWrites=true&w=majority', {
     useUnifiedTopology: true,
     useNewUrlParser: true
 }).then(() => {
@@ -64,14 +64,14 @@ app.use(express.static(path.join(__dirname, 'public')))
 // routes
 app.get('/', (req, res) => {
     post.find()
-    .populate('category')
-    .sort({ date: 'desc' })
-    .then((posts) => {
-        res.render('index', { posts: posts })
-    }).catch((err) => {
-        req.flash('error_msg', 'There was an internal error')
-        res.redirect('/404')
-    })
+        .populate('category')
+        .sort({ date: 'desc' })
+        .then((posts) => {
+            res.render('index', { posts: posts })
+        }).catch((err) => {
+            req.flash('error_msg', 'There was an internal error')
+            res.redirect('/404')
+        })
 })
 
 app.get('/post/:slug', (req, res) => {
@@ -122,7 +122,7 @@ app.get('/404', (req, res) => {
 app.use('/admin', admin)
 app.use('/users', users)
 //others
-const PORT = 8081
+const PORT = process.env.PORT || 8081
 app.listen(PORT, () => {
-    console.log('Running server on port 8081!')
+    // console.log('Running server on port 8081!')
 })
