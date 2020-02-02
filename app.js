@@ -14,6 +14,7 @@ const category = mongoose.model('categories')
 const users = require('./routes/user')
 const passport = require('passport')
 require('./config/auth')(passport)
+const db = require('./config/db')
 // settings
 //settings - sessions
 app.use(session({
@@ -44,7 +45,9 @@ app.engine('handlebars', handlebars({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
 
 // setting - Mongoose
-mongoose.connect('mongodb+srv://teste:teste@cluster0-yjb6q.mongodb.net/blogapp?retryWrites=true&w=majority', {
+
+mongoose.connect(db.mongoURI, {
+// mongoose.connect('mongodb+srv://teste:teste@cluster0-yjb6q.mongodb.net/blogapp?retryWrites=true&w=majority', {
     useUnifiedTopology: true,
     useNewUrlParser: true
 }).then(() => {
